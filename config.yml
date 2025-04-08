@@ -1,0 +1,6 @@
+mongo:
+  uri: ''
+
+spiders:
+  loglevel: DEBUG
+  log_enabled: TRUE
