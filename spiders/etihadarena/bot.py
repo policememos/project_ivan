@@ -1,18 +1,26 @@
 import json
 import logging
 import re
-from urllib.parse import urlencode
+
+from urllib.parse import urlencode, unquote
+
 import scrapy
 from scrapy.selector import Selector
 
+from spiders.base import BotSpider as BaseBotSpider
 from spiders.ticket import Ticket
 
-logger = logging.getLogger('scrapy.spiders.etihadarena')
+logger = logging.getLogger('scrapy.spiders.etihadarena.bot')
 
 
-class EtihadarenaBot(scrapy.Spider):
+class BotSpider(BaseBotSpider):  # pylint: disable=R0904
+    """
+    В ссылке обязательно должны быть performanceAk и return
 
-    name = 'etihadarena'
+    event_url:
+        https://tickets.etihadarena.ae/yba_b2c/buy-tickets.html?performanceAk=YBA.EVN127.PRF1&return=https://www.etihadarena.ae/en/event-booking/modi-alshamrani-and-miami-band
+    """
+
     custom_settings = {
         'ITEM_PIPELINES': {
             'spiders.pipelines.InitParamsAndCheckActuality': 100,
@@ -37,15 +45,12 @@ class EtihadarenaBot(scrapy.Spider):
     }
 
     def __init__(self, **kwargs):
-        self.event_url = None
-        self.conditions = []
-        self.tickets = []
         self.csrf = None
         self.ssid = None
         self.product_id = None
         self.cart_id = None
         self.return_url = ''
-        self.mode = 'parse'
+        self.queue_cookies = {}
         super().__init__(**kwargs)
 
     def parse(self, response, **kwargs):
@@ -56,19 +61,84 @@ class EtihadarenaBot(scrapy.Spider):
             logger.error('Не передан event_url')
             return
         self.init_params()
-        if self.mode == 'parse':
+        yield scrapy.Request(
+            url=self.event.url,
+            callback=self.parse_queue_url,
+            dont_filter=True,
+        )
+
+        # if self.mode == 'parse':
+        #     yield scrapy.Request(
+        #         url=self.event.url,
+        #         callback=self.parse_sectors,
+        #         dont_filter=True,
+        #     )
+        # elif self.mode == 'buy':
+        #     yield scrapy.Request(
+        #         url=self.event.url,
+        #         callback=self.start_new_buy_session,
+        #         meta={'cookiejar': self.event_id},
+        #         dont_filter=True,
+        #     )
+
+    def parse_queue_url(self, response):
+        if matched := re.search(r"decodeURIComponent\('([^']+)", response.text):
+            url = 'https://bestunion.queue-it.net' + unquote(matched.group(1))
             yield scrapy.Request(
-                url=self.event.url,
-                callback=self.parse_sectors,
+                url=url,
+                callback=self.parse_queue_cookies,
                 dont_filter=True,
             )
-        elif self.mode == BotMode.BUY:
-            yield scrapy.Request(
-                url=self.event.url,
-                callback=self.start_new_buy_session,
-                meta={'cookiejar': self.event_id},
-                dont_filter=True,
-            )
+        else:
+            yield from self.parse_queue_cookies(response)
+
+    @staticmethod
+    def get_queue_cookies(response):
+        queue_cookies = {}
+        for _cookie in response.headers.getlist('Set-Cookie'):
+            _cookie = _cookie.decode('utf-8')
+            if 'Queue-it-token' in _cookie:
+                cookie = _cookie.split(';', maxsplit=1)[0].split('=')
+                queue_cookies['Queue-it-token'] = cookie[1]
+            if 'QueueITAccepted' in _cookie:
+                cookie = _cookie.split(';', maxsplit=1)
+                cookie = cookie[0].split('=', maxsplit=1)
+                queue_cookies[cookie[0]] = cookie[1]
+        return queue_cookies
+
+    def parse_queue_cookies(self, response):
+        if 'decodeURIComponent' not in response.text:
+            if self.mode == 'parse':
+                for sector in self.get_sectors(response):
+                    if self.check_sector_name(sector['product_name']):
+                        yield scrapy.Request(
+                            url=self.event.url,
+                            callback=self.start_new_parse_session,
+                            cookies=self.get_queue_cookies(response),
+                            dont_filter=True,
+                            meta={
+                                'sector': sector,
+                                'cookiejar': sector['seat_id']
+                            },
+                        )
+            elif self.mode == 'buy':
+                self.csrf = response.xpath(
+                    '//meta[@name = "_csrf"]/@content'
+                ).get('')
+                quant = self.event.max_tickets if self.tickets[0].get(
+                    'stand') else len(self.tickets)
+                yield scrapy.Request(
+                    method='POST',
+                    url='https://tickets.etihadarena.ae/yba_b2c/add/tickets',
+                    callback=self.add_ticket,
+                    body=self.get_add_tickets_body(self.ssid, quant),
+                    headers={
+                        'accept': '*/*',
+                        'accept-language': 'ru,en',
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    dont_filter=True,
+                )
 
     def parse_sectors(self, response):
         for sector in self.get_sectors(response):
@@ -150,7 +220,7 @@ class EtihadarenaBot(scrapy.Spider):
         cart_id = Selector(text=response.text).xpath(
             '//div[contains(@class, "prodrow")]/@id'
         ).get('')
-        if self.mode == BotMode.PARSE:
+        if self.mode == 'parse':
             response.meta['cart_id'] = cart_id
             yield scrapy.Request(
                 url=response.meta['sector']['sector_url'],
@@ -250,7 +320,7 @@ class EtihadarenaBot(scrapy.Spider):
             seat_id = holds.pop(0).get('id')
             response.meta['holds'] = holds
             yield self.release_request(self.ssid, seat_id, response.meta)
-        elif self.mode == BotMode.BUY:
+        elif self.mode == 'buy':
             logger.info('Все билеты убраны из корзины, идем бронировать наши')
             yield scrapy.Request(
                 method='POST',
@@ -309,7 +379,7 @@ class EtihadarenaBot(scrapy.Spider):
         try:
             tickets, hold_seat_ids = self.get_seats(response)
         except Exception:  # pylint: disable=W0703
-            yield self._retry(response.request, ValueError, self)
+            # yield self._retry(response.request, ValueError, self)
             return
         yield from self.extract_seats(tickets, response, ssid)
 

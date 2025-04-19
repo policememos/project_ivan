@@ -12,12 +12,13 @@ class Condition:  # pylint: disable=R0902
         self.seat = cond.get('re_seats') or self.__regex_cond(cond.get('seats'))
         self.price_min = cond.get('price_min')
         self.price_max = cond.get('price_max')
-        self.units = self.__prepare_units(cond, max_tickets)
-        self.index = cond.get('index')
+        # self.units = self.__prepare_units(cond, max_tickets)
+        # self.index = cond.get('index')
         self.count = cond.get('count')
-        self.priority = cond.get('priority') or 0
-        self.promocode = cond.get('promocode') or None
-        self.sort = self.__make_tuple(cond.get('sort')) or None
+        # self.priority = cond.get('priority') or 0
+        # self.promocode = cond.get('promocode') or None
+        # self.sort = self.__make_tuple(cond.get('sort')) or None
+        # self.sort_index = cond.get('sort_index') or None
 
     def __str__(self):
         return str({k: v for k, v in self.__dict__.items() if v is not None})
@@ -43,23 +44,23 @@ class Condition:  # pylint: disable=R0902
                 parts += [str(numb) for numb in range(r_start, r_finish)]
         return fr'^(?i:{"|".join(parts)})$'
 
-    @staticmethod
-    def __prepare_units(cond: dict, max_tickets: int) -> Optional[list]:
-        if cond.get('pairs'):
-            max_tickets = max_tickets or 4
-            units = []
-            for ind in range(2, max_tickets + 1):
-                units.append([str(u) for u in range(1, ind + 1)])
-        elif units := cond.get('units'):
-            for ind, unit in enumerate(units):
-                unit = unit if isinstance(unit, list) else [unit]
-                units[ind] = [str(u) for u in unit]
-        return sorted(units, key=len, reverse=True) if units else None
+    # @staticmethod
+    # def __prepare_units(cond: dict, max_tickets: int) -> Optional[list]:
+    #     if cond.get('pairs'):
+    #         max_tickets = max_tickets or 4
+    #         units = []
+    #         for ind in range(2, max_tickets + 1):
+    #             units.append([str(u) for u in range(1, ind + 1)])
+    #     elif units := cond.get('units'):
+    #         for ind, unit in enumerate(units):
+    #             unit = unit if isinstance(unit, list) else [unit]
+    #             units[ind] = [str(u) for u in unit]
+    #     return sorted(units, key=len, reverse=True) if units else None
 
-    @staticmethod
-    def __make_tuple(sort):
-        if isinstance(sort, list):
-            return tuple([tuple(x) for x in sort])
+    # @staticmethod
+    # def __make_tuple(sort):
+    #     if isinstance(sort, list):
+    #         return tuple([tuple(x) for x in sort])
 
     def check_sector(self, sector: str) -> bool:
         return not self.sector or re.search(self.sector, sector)
@@ -80,8 +81,8 @@ class Condition:  # pylint: disable=R0902
     def check(self, ticket: Ticket) -> bool:  # noqa: C901 pylint: disable=R0911
         if self.count is not None and self.count <= 0:
             return False
-        if ticket.stand and self.units:
-            return False
+        # if ticket.stand and self.units:
+        #     return False
         if not self.check_sector(ticket.sector):
             return False
         if ticket.row is not None and not self.check_row(ticket.row):
@@ -90,8 +91,8 @@ class Condition:  # pylint: disable=R0902
             return False
         if ticket.price is not None and not self.check_price(ticket.price):
             return False
-        if not ticket.stand and not self.units and self.count:
-            self.count -= 1
-        if self.promocode:
-            ticket['promocode'] = self.promocode
+        # if not ticket.stand and not self.units and self.count:
+        #     self.count -= 1
+        # if self.promocode:
+        #     ticket['promocode'] = self.promocode
         return True
