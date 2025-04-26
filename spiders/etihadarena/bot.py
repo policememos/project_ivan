@@ -33,8 +33,8 @@ class BotSpider(BaseBotSpider):  # pylint: disable=R0904
             'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
             'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': 102,
             'spiders.middlewares.CookiesAndHeadersMiddleware': 103,
-            'spiders.middlewares.ProxyMiddleware': 105,
-            'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
+            # 'spiders.middlewares.ProxyMiddleware': 105,
+            # 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
             'spiders.middlewares.TlsSessionMiddleware': 115,
             'spiders.middlewares.RandomUserAgentMiddleware': 600,
             'spiders.middlewares.TooManyRequestsRetryMiddleware': 630,
@@ -66,20 +66,6 @@ class BotSpider(BaseBotSpider):  # pylint: disable=R0904
             callback=self.parse_queue_url,
             dont_filter=True,
         )
-
-        # if self.mode == 'parse':
-        #     yield scrapy.Request(
-        #         url=self.event.url,
-        #         callback=self.parse_sectors,
-        #         dont_filter=True,
-        #     )
-        # elif self.mode == 'buy':
-        #     yield scrapy.Request(
-        #         url=self.event.url,
-        #         callback=self.start_new_buy_session,
-        #         meta={'cookiejar': self.event_id},
-        #         dont_filter=True,
-        #     )
 
     def parse_queue_url(self, response):
         if matched := re.search(r"decodeURIComponent\('([^']+)", response.text):
@@ -140,16 +126,6 @@ class BotSpider(BaseBotSpider):  # pylint: disable=R0904
                     dont_filter=True,
                 )
 
-    def parse_sectors(self, response):
-        for sector in self.get_sectors(response):
-            if self.check_sector_name(sector['product_name']):
-                yield scrapy.Request(
-                    url=self.event.url,
-                    callback=self.start_new_parse_session,
-                    dont_filter=True,
-                    meta={'sector': sector, 'cookiejar': sector['seat_id']},
-                )
-
     def start_new_parse_session(self, response):
         csrf = response.xpath('//meta[@name = "_csrf"]/@content').get('')
         sector = response.meta['sector']
@@ -171,24 +147,6 @@ class BotSpider(BaseBotSpider):  # pylint: disable=R0904
                 'ssid': ssid,
                 'csrf': csrf
             })
-
-    def start_new_buy_session(self, response):
-        self.csrf = response.xpath('//meta[@name = "_csrf"]/@content').get('')
-        quant = self.event.max_tickets if self.tickets[0].get(
-            'stand') else len(self.tickets)
-        yield scrapy.Request(
-            method='POST',
-            url='https://tickets.etihadarena.ae/yba_b2c/add/tickets',
-            callback=self.add_ticket,
-            body=self.get_add_tickets_body(self.ssid, quant),
-            headers={
-                'accept': '*/*',
-                'accept-language': 'ru,en',
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            dont_filter=True,
-            meta={'cookiejar': self.event_id},
-        )
 
     def init_params(self):
         if self.tickets:
@@ -379,7 +337,7 @@ class BotSpider(BaseBotSpider):  # pylint: disable=R0904
         try:
             tickets, hold_seat_ids = self.get_seats(response)
         except Exception:  # pylint: disable=W0703
-            # yield self._retry(response.request, ValueError, self)
+            yield self._retry(response.request, ValueError, self)
             return
         yield from self.extract_seats(tickets, response, ssid)
 

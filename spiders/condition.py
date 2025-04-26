@@ -15,10 +15,16 @@ class Condition:  # pylint: disable=R0902
         # self.units = self.__prepare_units(cond, max_tickets)
         # self.index = cond.get('index')
         self.count = cond.get('count')
-        # self.priority = cond.get('priority') or 0
+        self.priority = cond.get('priority') or 0
         # self.promocode = cond.get('promocode') or None
         # self.sort = self.__make_tuple(cond.get('sort')) or None
         # self.sort_index = cond.get('sort_index') or None
+
+    def __getitem__(self, key):
+        return getattr(self, key, None)
+
+    def __getattr__(self, item):
+        return False
 
     def __str__(self):
         return str({k: v for k, v in self.__dict__.items() if v is not None})

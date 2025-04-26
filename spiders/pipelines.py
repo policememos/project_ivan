@@ -16,7 +16,7 @@ from spiders.condition import Condition
 
 # from spiders.helpers import send_sms_message
 from spiders.mongo_utils import get_bot_admins, get_mongo_bots_client
-# from spiders.tasks import run_bot_quick_from_spider, run_bot_long_from_spider
+from spiders.tasks import run_bot_quick_from_spider
 from spiders.ticket import Ticket
 
 logger = logging.getLogger('scrapy.pipelines')
@@ -42,11 +42,11 @@ class CheckTicket:
             if item.get_sid() not in self.orders_tickets:
                 for cond in self.conditions:
                     if cond.check(item):
-                        item['cond_index'] = cond.index
-                        item['units'] = cond.units
+                        # item['cond_index'] = cond.index
+                        # item['units'] = cond.units
                         item['priority'] = cond.priority
-                        item['sort'] = cond.sort
-                        item['sort_index'] = cond.sort_index
+                        # item['sort'] = cond.sort
+                        # item['sort_index'] = cond.sort_index
                         if item.stand or cond.units:
                             item['cond_count'] = cond.count
                         self.add_ticket(item, suit=True)
@@ -155,7 +155,8 @@ class InitParamsAndCheckActuality:
         if bot_tickets := getattr(spider, 'tickets', None):
             orders_tickets = spider.event.order_tickets
             for ticket in bot_tickets:
-                ticket = Ticket(ticket)
+                if not isinstance(ticket, Ticket):
+                    ticket = Ticket(ticket)
                 if self.is_actual_ticket(ticket, conditions, orders_tickets):
                     tickets.append(ticket)
                 elif ticket['units']:
@@ -291,7 +292,7 @@ class BotParseMode:
     @staticmethod
     def run_bot_delay(**kwargs):
         if settings.SPIDERS[kwargs['source']]['queue'] == 'quick':
-            ...
+            run_bot_quick_from_spider(**kwargs)
             # run_bot_quick_from_spider.delay(**kwargs)
         else:
             ...
@@ -444,13 +445,8 @@ class BotBuyMode:
         for ticket in self.success_tickets:
             message += f'{ticket}\n'
         message += self.order_fields.get('message') or ''
-        if order_id := self.order_fields.get('order_id'):
-            message += f'\nНОМЕР ЗАКАЗА: {order_id}'
-        if settings.PROXY_PAYMENT_URL and _id:
-            payment_url = settings.PROXY_PAYMENT_URL + _id
-        else:
-            payment_url = self.order_fields['payment_url']
-        message += f"\nСсылка для оплаты: {payment_url}"
+        message += f'\nНОМЕР ЗАКАЗА: {_id}'
+        message += f"\nСсылка для оплаты: {self.order_fields['payment_url']}"
         return message
 
     def dump_order(self, item, spider):

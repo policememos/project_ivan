@@ -127,7 +127,7 @@ class UserAgentMiddleware:
         request.headers.setdefault('User-Agent', self.user_agent)
 
 
-class CookiesAndHeadersMiddleware:
+class CookiesAndHeadersMiddleware:  #забирает куки или хедеры из event, он из базы events
 
     def __init__(self, crawler):  # pylint: disable=W0613
         self.user_agent = None
