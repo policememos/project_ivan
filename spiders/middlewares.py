@@ -22,11 +22,13 @@ class ProxyMiddleware:
         return cls(crawler)
 
     def __init__(self, crawler):  # pylint: disable=W0613
+        logger.info('middleware ProxyMiddleware start')
         self.sources = get_proxy_settings()
         self.proxy_session = None
         with open('config.yml', 'r', encoding='utf-8') as ymlfile:
             cfg = yaml.safe_load(ymlfile)
         self.main_proxy = cfg['main_proxy']
+        logger.info('middleware ProxyMiddleware stop')
 
     def _source_enabled(self, spider):
         if not spider.custom_settings.get('proxy_rotation', True):
@@ -54,9 +56,11 @@ class ProxyMiddleware:
 class RandomUserAgentMiddleware:
 
     def __init__(self, crawler):
+        logger.info('middleware ProxyMiddleware start')
         fallback = crawler.settings.get('FAKEUSERAGENT_FALLBACK', None)
         self.ua_type = 'random'
         self.user_agent = UserAgent(fallback=fallback)
+        logger.info('middleware ProxyMiddleware start')
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -74,8 +78,10 @@ class RandomUserAgentMiddleware:
 class TooManyRequestsRetryMiddleware(RetryMiddleware):
 
     def __init__(self, crawler):
+        logger.info('middleware ProxyMiddleware start')
         super(TooManyRequestsRetryMiddleware, self).__init__(crawler.settings)
         self.crawler = crawler
+        logger.info('middleware ProxyMiddleware start')
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -105,7 +111,9 @@ class SpiderRetryMiddleware(RetryMiddleware):
 class UserAgentMiddleware:
 
     def __init__(self, crawler):  # pylint: disable=W0613
+        logger.info('middleware ProxyMiddleware start')
         self.user_agent = None
+        logger.info('middleware ProxyMiddleware start')
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -202,8 +210,10 @@ class TlsSessionMiddleware:
         return middleware
 
     def __init__(self, crawler):
+        logger.info('middleware ProxyMiddleware start')
         self.tls_session = None
         self.timeout = crawler.settings.get('DOWNLOAD_TIMEOUT') or 30
+        logger.info('middleware ProxyMiddleware start')
 
     @staticmethod
     def _enable_tls(request, spider):
