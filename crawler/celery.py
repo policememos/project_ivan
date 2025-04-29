@@ -1,16 +1,8 @@
 import logging
-
 from celery import Celery
-import sentry_sdk
-from sentry_sdk.integrations.celery import CeleryIntegration
-
 from crawler.conf import settings
 
-# if settings.SENTRY_ENABLED:  # type: ignore
-#     sentry_sdk.init(
-#         settings.SENTRY_SDK,  # type: ignore
-#         integrations=[CeleryIntegration()],
-#     )
+
 
 app = Celery(
     'spiders',
