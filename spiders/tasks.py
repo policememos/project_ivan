@@ -21,6 +21,7 @@ logger = logging.getLogger('spiders.tasks')
 @app.task(ignore_result=True, expires=SCHED['bots']['expires'])
 def run_all_bots_main(default_delay: int = 60) -> None:
     events: list = get_bot_events()
+    logger.info(f'Нашел ивенты {[x["name"] for x in events]}')
     for event in events:
         last_parse = event.get('last_parse')
         parse_delay = timedelta(seconds=event.get('parse_delay', default_delay))
