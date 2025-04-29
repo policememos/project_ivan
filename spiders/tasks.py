@@ -10,10 +10,12 @@ from spiders.mongo_utils import (get_bot_events, get_wait_events,
 
 from spiders.account_utils import get_accounts
 from spiders.enum import BotMode
+import logging
 from spiders.ticket import Ticket
 
 
 SCHED = settings.SCHEDULE_SETTINGS  # type: ignore
+logger = logging.getLogger('spiders.tasks')
 
 
 @app.task(ignore_result=True, expires=SCHED['bots']['expires'])
@@ -24,6 +26,7 @@ def run_all_bots_main(default_delay: int = 60) -> None:
         parse_delay = timedelta(seconds=event.get('parse_delay', default_delay))
         if not last_parse or last_parse + parse_delay <= datetime.now():
             dump_event_changes(event['_id'], last_parse=datetime.now())
+        logger.info(f'Отправляю на запуск ИВЕНТ {event["name"]}')
         run_bot_quick.delay(event['_id'], event['source'])
 
 
