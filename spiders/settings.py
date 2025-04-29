@@ -25,10 +25,10 @@ DOWNLOADER_MIDDLEWARES = {
     'spiders.middlewares.CookiesAndHeadersMiddleware': 103,
     'spiders.middlewares.ProxyMiddleware': 105,
     'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
-    # 'spiders.middlewares.TlsSessionMiddleware': 115,
-    # 'spiders.middlewares.RandomUserAgentMiddleware': 600,
-    # 'spiders.middlewares.TooManyRequestsRetryMiddleware': 630,
-    # 'spiders.middlewares.SpiderRetryMiddleware': 640,
+    'spiders.middlewares.TlsSessionMiddleware': 115,
+    'spiders.middlewares.RandomUserAgentMiddleware': 600,
+    'spiders.middlewares.TooManyRequestsRetryMiddleware': 630,
+    'spiders.middlewares.SpiderRetryMiddleware': 640,
 }
 
 RETRY_TIMES = cfg['spiders']['retry_times']
