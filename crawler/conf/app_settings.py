@@ -34,9 +34,6 @@ SOURCES_DB = cfg['mongo_bots']['sources_db']
 EVENTS_COLLECTION = 'events'
 ORDERS_CL = 'orders'
 SCHEDULE_SETTINGS = cfg['celery']['schedule']
-MONGO_PARSERS_URI = cfg['mongo_parsers']['uri']
-MONGO_PARSERS_SSL = cfg['mongo_parsers']['ssl']
-PARSERS_DB = cfg['mongo_parsers']['parsers_db']
 
 # SPIDERS CLASSES
 SPIDERS: dict = {}

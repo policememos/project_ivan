@@ -6,7 +6,7 @@ from typing import Optional, Dict
 import yaml
 
 from crawler.conf import settings
-from spiders.mongo_utils import get_mongo_bots_client, get_mongo_parsers_client
+from spiders.mongo_utils import get_mongo_bots_client
 from spiders.ticket import Ticket
 from spiders.enum import BotMode
 
@@ -53,9 +53,9 @@ class Event:  # pylint: disable=R0902
 
     @staticmethod
     def prepare_users(users):
-        if client := get_mongo_parsers_client():
+        if client := get_mongo_bots_client():
             try:
-                contacts_cl = client[settings.PARSERS_DB]['contacts']
+                contacts_cl = client[settings.BOTS_DB]['contacts']
                 return contacts_cl.find(
                     {'name': {'$in': users}}
                 ).distinct('tg_id')

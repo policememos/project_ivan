@@ -20,18 +20,6 @@ def get_mongo_bots_client():
     return None
 
 
-def get_mongo_parsers_client():
-    try:
-        return pymongo.MongoClient(
-            settings.MONGO_PARSERS_URI,
-            ssl=settings.MONGO_PARSERS_SSL,
-            tlsAllowInvalidCertificates=True,
-        )
-    except Exception:  # pylint: disable=W0703
-        logger.error('Ошибка при инициализации клиента монги:', exc_info=True)
-    return None
-
-
 def dump_event_changes(event_id, **fields):
     if client := get_mongo_bots_client():
         try:
@@ -48,9 +36,9 @@ def dump_event_changes(event_id, **fields):
 
 
 def get_bot_admins():
-    if client := get_mongo_parsers_client():
+    if client := get_mongo_bots_client():
         try:
-            bots_db = client[settings.PARSERS_DB]
+            bots_db = client[settings.BOTS_DB]
             admins = bots_db['contacts'].find(
                 {'role': 'admin'}
             ).distinct('tg_id')
