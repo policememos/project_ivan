@@ -8,6 +8,7 @@ import yaml
 from crawler.conf import settings
 from spiders.mongo_utils import get_mongo_bots_client, get_mongo_parsers_client
 from spiders.ticket import Ticket
+from spiders.enum import BotMode
 
 logger = logging.getLogger('scrapy.spiders.event')
 
@@ -37,7 +38,7 @@ class Event:  # pylint: disable=R0902
 
         self.prepare_account_max_tickets()
 
-        if not self.skip_check or spider.mode == 'parse':
+        if not self.skip_check or spider.mode == BotMode.PARSE:
             orders = self.__init_orders()
 
             count_orders = self.__get_count_orders(orders)

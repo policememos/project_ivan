@@ -5,6 +5,7 @@ from scrapy.utils.project import get_project_settings
 from twisted.internet import reactor
 
 from crawler.conf import settings
+from spiders.enum import BotMode
 
 
 logger = logging.getLogger('scrapy.runners')
@@ -19,10 +20,9 @@ logging.getLogger('pika').setLevel(logging.INFO)
 
 def run_bot(id_event: str,
             source: str,
-            mode: str = 'parse',
+            mode: str = BotMode.PARSE,
             **kwargs) -> None:
     runner = CrawlerRunner(get_project_settings())
-
     runner.crawl(
         settings.SPIDERS[source]['bot'],  # type: ignore
         id_event=id_event,

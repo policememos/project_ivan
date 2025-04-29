@@ -4,6 +4,7 @@ import re
 
 import scrapy
 import yaml
+from spiders.enum import BotMode
 from spiders.ticket import Ticket
 
 from datetime import datetime
@@ -25,12 +26,13 @@ class BotSpider(scrapy.Spider):  # pylint: disable=R0902
 
     def __init__(self, **kwargs):
         self.event = None
-        self.mode = 'buy'
+        self.mode = BotMode.PARSE
         self.conditions = []
-        mytickets = [{'price': '350.00', 'product_id': 'YBA.EVN1.MCC66929', 'product_name': '108 LOWER TIER GOLD', 'row': 'H', 'seat': '18', 'seat_id': 10064833, 'sector': '108 LOWER TIER GOLD', 'sector_url': 'https://tickets.etihadarena.ae/yba_b2c/seats.html?ssId=YBA.EVN284.PRF1.SPS51', 'ssid': 'YBA.EVN284.PRF1.SPS51'}, {'price': '350.00', 'product_id': 'YBA.EVN1.MCC66929', 'product_name': '108 LOWER TIER GOLD', 'row': 'H', 'seat': '19', 'seat_id': 10064932, 'sector': '108 LOWER TIER GOLD', 'sector_url': 'https://tickets.etihadarena.ae/yba_b2c/seats.html?ssId=YBA.EVN284.PRF1.SPS51', 'ssid': 'YBA.EVN284.PRF1.SPS51'}, {'price': '350.00', 'product_id': 'YBA.EVN1.MCC66929', 'product_name': '108 LOWER TIER GOLD', 'row': 'H', 'seat': '20', 'seat_id': 10064887, 'sector': '108 LOWER TIER GOLD', 'sector_url': 'https://tickets.etihadarena.ae/yba_b2c/seats.html?ssId=YBA.EVN284.PRF1.SPS51', 'ssid': 'YBA.EVN284.PRF1.SPS51'}, {'price': '350.00', 'product_id': 'YBA.EVN1.MCC66929', 'product_name': '108 LOWER TIER GOLD', 'row': 'H', 'seat': '21', 'seat_id': 10064816, 'sector': '108 LOWER TIER GOLD', 'sector_url': 'https://tickets.etihadarena.ae/yba_b2c/seats.html?ssId=YBA.EVN284.PRF1.SPS51', 'ssid': 'YBA.EVN284.PRF1.SPS51'}, {'price': '350.00', 'product_id': 'YBA.EVN1.MCC66929', 'product_name': '108 LOWER TIER GOLD', 'row': 'L', 'seat': '15', 'seat_id': 10065370, 'sector': '108 LOWER TIER GOLD', 'sector_url': 'https://tickets.etihadarena.ae/yba_b2c/seats.html?ssId=YBA.EVN284.PRF1.SPS51', 'ssid': 'YBA.EVN284.PRF1.SPS51'}]
-        tiks = [Ticket(x) for x in mytickets]
-        self.max_tickets = 5
-        self.source = 'etihadarena'
+        # mytickets = [{'price': '350.00', 'product_id': 'YBA.EVN1.MCC66929', 'product_name': '108 LOWER TIER GOLD', 'row': 'L', 'seat': '17', 'seat_id': 10065580, 'sector': '108 LOWER TIER GOLD', 'sector_url': 'https://tickets.etihadarena.ae/yba_b2c/seats.html?ssId=YBA.EVN284.PRF1.SPS51', 'ssid': 'YBA.EVN284.PRF1.SPS51'}, {'price': '350.00', 'product_id': 'YBA.EVN1.MCC66929', 'product_name': '108 LOWER TIER GOLD', 'row': 'L', 'seat': '18', 'seat_id': 10065418, 'sector': '108 LOWER TIER GOLD', 'sector_url': 'https://tickets.etihadarena.ae/yba_b2c/seats.html?ssId=YBA.EVN284.PRF1.SPS51', 'ssid': 'YBA.EVN284.PRF1.SPS51'}]
+        # tiks = [Ticket(x) for x in mytickets]
+        tiks = []
+        # self.max_tickets = 5
+        # self.source = 'etihadarena'
         self.tickets = tiks or []
 
         self.retry_tickets = []
@@ -41,10 +43,10 @@ class BotSpider(scrapy.Spider):  # pylint: disable=R0902
         self.solve_captcha = False
         self.fakes = []
 
-        # self.event_id = None
-        self.event_id = '749dc5ca-2b50-414f-cb19-f13c92b89aa1'
-        # self.id_event = None
-        self.id_event = '749dc5ca-2b50-414f-cb19-f13c92b89aa1'
+        self.event_id = None
+        # self.event_id = '749dc5ca-2b50-414f-cb19-f13c92b89aa1'
+        self.id_event = None
+        # self.id_event = '749dc5ca-2b50-414f-cb19-f13c92b89aa1'
         self.base_url = None
         super().__init__(**kwargs)
 

@@ -5,13 +5,14 @@ with open('config.yml', 'r', encoding='utf-8') as ymlfile:
     cfg = yaml.safe_load(ymlfile)
 
 _BOTS_QUICK = 'bots_quick'
+_BOTS_QUICK_BUY = 'bots_quick_buy'
 
 
 class Tasks:
     TASK_RUN_ALL_BOTS = 'spiders.tasks.run_all_bots_main'
     TASK_RUN_BOT_QUICK = 'spiders.tasks.run_bot_quick'
     # TASK_RUN_BOT_LONG = 'spiders.tasks.run_bot_long'
-    # TASK_RUN_BOT_QUICK_FROM_SPIDER = 'spiders.tasks.run_bot_quick_from_spider'
+    TASK_RUN_BOT_QUICK_FROM_SPIDER = 'spiders.tasks.run_bot_quick_from_spider'
     # TASK_RUN_BOT_LONG_FROM_SPIDER = 'spiders.tasks.run_bot_long_from_spider'
     # TASK_RUN_SOLVER_CAPTCHA = 'spiders.tasks.run_solver_captcha'
     # TASK_RUN_DELETE_OLD_ORDERS = 'spiders.tasks.run_delete_old_orders'
@@ -23,9 +24,15 @@ class Tasks:
             TASK_RUN_BOT_QUICK,
         )
     }
+    BOTS_QUICK_QUEUE_BUY = {
+        task_name: _BOTS_QUICK_BUY
+        for task_name in (
+            TASK_RUN_BOT_QUICK_FROM_SPIDER,
+        )
+    }
 
     QUEUES = {
-        **BOTS_QUICK_QUEUE,
+        **BOTS_QUICK_QUEUE, **BOTS_QUICK_QUEUE_BUY
     }
 
 

@@ -53,7 +53,7 @@ def get_bot_admins():
             bots_db = client[settings.PARSERS_DB]
             admins = bots_db['contacts'].find(
                 {'role': 'admin'}
-            ).distinct('phone')
+            ).distinct('tg_id')
             return admins
         except Exception:  # pylint: disable=W0703
             logger.error('Ошибка в get_bot_admins:',

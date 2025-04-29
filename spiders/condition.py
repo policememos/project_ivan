@@ -97,8 +97,8 @@ class Condition:  # pylint: disable=R0902
             return False
         if ticket.price is not None and not self.check_price(ticket.price):
             return False
-        # if not ticket.stand and not self.units and self.count:
-        #     self.count -= 1
+        if not ticket.stand and not self.units and self.count:  #для механизма ограничения по count у кондишена
+            self.count -= 1
         # if self.promocode:
         #     ticket['promocode'] = self.promocode
         return True

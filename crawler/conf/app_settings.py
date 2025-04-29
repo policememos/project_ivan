@@ -1,21 +1,21 @@
 from crawler.schedule import cfg, SCHEDULE, _QueueRouter
 
 # REDIS SETTINGS
-# REDIS_HOST = cfg['redis']['host']
-# REDIS_PORT = cfg['redis']['port']
-# REDIS_PASS = cfg['redis']['password']
-# REDIS_DB = cfg['redis']['celery_db']
+REDIS_HOST = cfg['redis']['host']
+REDIS_PORT = cfg['redis']['port']
+REDIS_PASS = cfg['redis']['password']
+REDIS_DB = cfg['redis']['celery_db']
 
 # CELERY SETTINGS
-# REDIS_HOSTPORTDB = f'redis://:{REDIS_PASS}@{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'
-# broker_url = REDIS_HOSTPORTDB
-# result_backend = REDIS_HOSTPORTDB
-# task_routes = (_QueueRouter(), )
-# task_send_sent_event = True
-# worker_max_tasks_per_child = 1
-# worker_concurrency = 1
-# worker_prefetch_multiplier = 1
-# timezone = 'Europe/Moscow'
+REDIS_HOSTPORTDB = f'redis://:{REDIS_PASS}@{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'
+broker_url = REDIS_HOSTPORTDB
+result_backend = REDIS_HOSTPORTDB
+task_routes = (_QueueRouter(), )
+task_send_sent_event = True
+worker_max_tasks_per_child = 1
+worker_concurrency = 1
+worker_prefetch_multiplier = 1
+timezone = 'Europe/Moscow'
 
 beat_scheduler = 'celery.beat.PersistentScheduler'
 beat_schedule = SCHEDULE
@@ -23,14 +23,7 @@ beat_schedule = SCHEDULE
 worker_hijack_root_logger = False
 LOG_LEVEL = cfg['celery']['loglevel']
 
-# RABBITMQ SETTINGS
-# RABBITMQ_HOST = cfg['rabbitmq']['host']
-# RABBITMQ_PORT = cfg['rabbitmq']['port']
-# RABBITMQ_USERNAME = cfg['rabbitmq']['username']
-# RABBITMQ_PASSWORD = cfg['rabbitmq']['password']
-# RABBITMQ_QUEUES = cfg['rabbitmq']['queqes']
-# RABBITMQ_PREFETCH_COUNT = 1
-# RABBITMQ_MESSAGE_LIMIT = int(cfg['rabbitmq']['message_limit'])
+BOT_TOKEN = cfg['bot_token']
 
 # MONGO BOTS CONNECTION SETTINGS
 MONGO_BOTS_URI = cfg['mongo_bots']['uri']
