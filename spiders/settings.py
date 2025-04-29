@@ -22,13 +22,13 @@ FAKEUSERAGENT_FALLBACK = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' \
 DOWNLOADER_MIDDLEWARES = {
     'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
-    # 'spiders.middlewares.CookiesAndHeadersMiddleware': 103,
-    # 'spiders.middlewares.ProxyMiddleware': 105,
-    # 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
-    # 'spiders.middlewares.TlsSessionMiddleware': 115,
-    # 'spiders.middlewares.RandomUserAgentMiddleware': 600,
-    # 'spiders.middlewares.TooManyRequestsRetryMiddleware': 630,
-    # 'spiders.middlewares.SpiderRetryMiddleware': 640,
+    'spiders.middlewares.CookiesAndHeadersMiddleware': 103,
+    'spiders.middlewares.ProxyMiddleware': 105,
+    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
+    'spiders.middlewares.TlsSessionMiddleware': 115,
+    'spiders.middlewares.RandomUserAgentMiddleware': 600,
+    'spiders.middlewares.TooManyRequestsRetryMiddleware': 630,
+    'spiders.middlewares.SpiderRetryMiddleware': 640,
 }
 
 RETRY_TIMES = cfg['spiders']['retry_times']
