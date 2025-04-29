@@ -4,9 +4,7 @@ from typing import Optional
 from crawler.celery import app
 from crawler.conf import settings
 from spiders.runners import run_bot
-from spiders.mongo_utils import (get_bot_events, get_wait_events,
-                                 get_accounter_sources, dump_event_changes,
-                                 remove_old_orders, remove_old_captchas)
+from spiders.mongo_utils import (get_bot_events,  dump_event_changes)
 
 from spiders.account_utils import get_accounts
 from spiders.enum import BotMode
