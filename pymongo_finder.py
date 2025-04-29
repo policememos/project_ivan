@@ -19,3 +19,12 @@ def get_bot_all_events():
         finally:
             client.close()
     return []
+
+res = 'Empty :('
+
+ans = get_bot_all_events()
+
+if ans:
+    res = ans
+
+print(res)
