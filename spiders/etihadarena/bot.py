@@ -14,7 +14,7 @@ from spiders.mongo_utils import get_bot_admins
 from spiders.ticket import Ticket
 
 logger = logging.getLogger('scrapy.spiders.etihadarena.bot')
-logging.basicConfig(level=logging.DEBUG, filename="MYLOG.log",filemode="w")
+# logging.basicConfig(level=logging.DEBUG, filename="MYLOG.log",filemode="w")
 
 
 class BotSpider(BaseBotSpider):  # pylint: disable=R0904
