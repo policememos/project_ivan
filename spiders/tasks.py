@@ -25,8 +25,8 @@ def run_all_bots_main(default_delay: int = 60) -> None:
         parse_delay = timedelta(seconds=event.get('parse_delay', default_delay))
         if not last_parse or last_parse + parse_delay <= datetime.now():
             dump_event_changes(event['_id'], last_parse=datetime.now())
-        logger.info(f'Отправляю на запуск ИВЕНТ {event["name"]}')
-        run_bot_quick.delay(event['_id'], event['source'])
+            logger.info(f'Отправляю на запуск ИВЕНТ {event["name"]}')
+            run_bot_quick.delay(event['_id'], event['source'])
 
 
 @app.task(ignore_result=True, expires=SCHED['bots']['expires'])
