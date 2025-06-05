@@ -14,7 +14,6 @@ def get_mongo_bots_client():
             settings.MONGO_BOTS_URI,
             ssl=settings.MONGO_BOTS_SSL,
             tlsAllowInvalidCertificates=True,
-            logging_level=logging.INFO,
         )
     except Exception:  # pylint: disable=W0703
         logger.error('Ошибка при инициализации клиента монги:', exc_info=True)
