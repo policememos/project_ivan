@@ -5,9 +5,9 @@ import re
 import scrapy
 import yaml
 from spiders.enum import BotMode
-from spiders.ticket import Ticket
+# from spiders.ticket import Ticket
 
-from datetime import datetime
+# from datetime import datetime
 
 logger = logging.getLogger('scrapy.spiders.base')
 
@@ -30,10 +30,10 @@ class BotSpider(scrapy.Spider):  # pylint: disable=R0902
         self.conditions = []
         # mytickets = [{'price': '350.00', 'product_id': 'YBA.EVN1.MCC66929', 'product_name': '108 LOWER TIER GOLD', 'row': 'L', 'seat': '17', 'seat_id': 10065580, 'sector': '108 LOWER TIER GOLD', 'sector_url': 'https://tickets.etihadarena.ae/yba_b2c/seats.html?ssId=YBA.EVN284.PRF1.SPS51', 'ssid': 'YBA.EVN284.PRF1.SPS51'}, {'price': '350.00', 'product_id': 'YBA.EVN1.MCC66929', 'product_name': '108 LOWER TIER GOLD', 'row': 'L', 'seat': '18', 'seat_id': 10065418, 'sector': '108 LOWER TIER GOLD', 'sector_url': 'https://tickets.etihadarena.ae/yba_b2c/seats.html?ssId=YBA.EVN284.PRF1.SPS51', 'ssid': 'YBA.EVN284.PRF1.SPS51'}]
         # tiks = [Ticket(x) for x in mytickets]
-        tiks = []
+        # tiks = []
         # self.max_tickets = 5
         # self.source = 'etihadarena'
-        self.tickets = tiks or []
+        self.tickets = []
 
         self.retry_tickets = []
 
@@ -44,9 +44,7 @@ class BotSpider(scrapy.Spider):  # pylint: disable=R0902
         self.fakes = []
 
         self.event_id = None
-        # self.event_id = '749dc5ca-2b50-414f-cb19-f13c92b89aa1'
         self.id_event = None
-        # self.id_event = '749dc5ca-2b50-414f-cb19-f13c92b89aa1'
         self.base_url = None
         super().__init__(**kwargs)
 

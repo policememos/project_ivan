@@ -40,10 +40,9 @@ class BotSpider(BaseBotSpider):  # pylint: disable=R0902,R0904
     handle_httpstatus_list = [403, 404, 500]
 
     def __init__(self, **kwargs):
+        logger.info('Инициализация класса Тикетлэнда')
         self.csrf = None
-        with open('spiders/ticketland/config.yml', 'r',
-                  encoding='utf-8') as file:
-            self.user_agent = yaml.safe_load(file)['user_agent']
+        self.user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
         self.headers = {
             'X-Requested-With': 'XMLHttpRequest',
             'Accept': 'application/json',
