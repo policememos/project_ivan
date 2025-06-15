@@ -22,7 +22,7 @@ logging.basicConfig(
         logging.StreamHandler()
     ])
 
-logger.info("Демон запущен и пишет логи в %s", LOG_FILE)
+logger.info("Демон запущен и пишет логи в файл %s", LOG_FILE)
 
 admin = get_bot_admins()
 for adm in admin:
