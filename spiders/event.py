@@ -45,11 +45,16 @@ class Event:  # pylint: disable=R0902
 
             if self.count or self.__check_exists_count():
                 self.__update_event_count(count_orders)
-                # self.__set_index_conditions()
-                # self.__set_count_conditions(count_orders)
+                self.__set_index_conditions()
+                self.__set_count_conditions(count_orders)
 
-            # if event.get('use_priority', False):
-            #     self.prepare_conditions()
+            if event.get('use_priority', False):
+                self.prepare_conditions()
+            self.__set_sort_index_conditions()
+
+    def __set_sort_index_conditions(self):
+        for ind, condition in enumerate(self.conditions, 1):
+            condition['sort_index'] = ind
 
     @staticmethod
     def prepare_users(users):
@@ -127,27 +132,27 @@ class Event:  # pylint: disable=R0902
         if self.count is not None:
             self.count = max(self.count - count_orders.get('all', 0), 0)
 
-    # def __set_index_conditions(self):  # noqa: C901
-    #     changed = False
-    #     start_index = int(datetime.now().timestamp())
-    #     for ind, cond in enumerate(self.conditions):
-    #         if cond.get('count') is not None and not cond.get('index'):
-    #             changed = True
-    #             cond['index'] = str(start_index + ind)
-    #
-    #     if changed:
-    #         if client := get_mongo_bots_client():
-    #             try:
-    #                 bot_db = client[settings.BOTS_DB]
-    #                 bot_db[settings.EVENTS_COLLECTION].update_one(
-    #                     {'_id': self.id_event},
-    #                     {'$set': {'bot_params.conditions': self.conditions}},
-    #                 )
-    #             except Exception:  # pylint: disable=W0703
-    #                 logger.error('Ошибка в __set_index_conditions:',
-    #                              exc_info=True)
-    #             finally:
-    #                 client.close()
+    def __set_index_conditions(self):  # noqa: C901
+        changed = False
+        start_index = int(datetime.now().timestamp())
+        for ind, cond in enumerate(self.conditions):
+            if cond.get('count') is not None and not cond.get('index'):
+                changed = True
+                cond['index'] = str(start_index + ind)
+
+        if changed:
+            if client := get_mongo_bots_client():
+                try:
+                    bot_db = client[settings.BOTS_DB]
+                    bot_db[settings.EVENTS_COLLECTION].update_one(
+                        {'_id': self.id_event},
+                        {'$set': {'bot_params.conditions': self.conditions}},
+                    )
+                except Exception:  # pylint: disable=W0703
+                    logger.error('Ошибка в __set_index_conditions:',
+                                 exc_info=True)
+                finally:
+                    client.close()
 
     def __set_count_conditions(self, count_orders: Dict[str, int]):
         for cond in self.conditions:

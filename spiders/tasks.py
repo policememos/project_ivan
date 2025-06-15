@@ -1,15 +1,15 @@
 from datetime import datetime, timedelta
-from typing import Optional
+# from typing import Optional
 
 from crawler.celery import app
 from crawler.conf import settings
 from spiders.runners import run_bot
 from spiders.mongo_utils import (get_bot_events,  dump_event_changes)
 
-from spiders.account_utils import get_accounts
+# from spiders.account_utils import get_accounts
 from spiders.enum import BotMode
 import logging
-from spiders.ticket import Ticket
+# from spiders.ticket import Ticket
 
 
 SCHED = settings.SCHEDULE_SETTINGS  # type: ignore

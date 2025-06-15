@@ -28,3 +28,6 @@ def send_sms_message(phone: str, message: str) -> None:
     if response.status_code != 200:
         logger.error('Ошибка (%s) %s отправки сообщения в телеграме: %s',
             response.status_code, response.text, data)
+    else:
+        logger.info('Отправил сообщение для %s, текст: %s',
+            phone, message)

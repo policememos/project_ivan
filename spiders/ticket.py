@@ -47,12 +47,8 @@ class Ticket:
         return json.dumps(self.get_dict())
 
     def __str__(self):
-        client = ''
-        if self.client:
-            client = (f" (Имя: {self.client['name']}, "
-                      f"Документ: {self.client['document']})")
         if self.stand:
             return (f'Стоячий сектор: {self.sector} '
-                    f'цена: {self.price} (цена за один билет){client}')
+                    f'цена: {self.price} (цена за один билет)')
         return (f'Сектор: {self.sector}, ряд: {self.row}, '
-                f'место: {self.seat}, цена: {self.price}{client}')
+                f'место: {self.seat}, цена: {self.price}')

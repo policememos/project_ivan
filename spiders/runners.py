@@ -9,7 +9,6 @@ from spiders.enum import BotMode
 
 
 logger = logging.getLogger('scrapy.runners')
-logging.getLogger('pika').setLevel(logging.INFO)
 
 
 # def solver_captcha(spider, captcha_version, sitekey):
@@ -20,7 +19,7 @@ logging.getLogger('pika').setLevel(logging.INFO)
 
 def run_bot(id_event: str,
             source: str,
-            mode: str = BotMode.PARSE,
+            mode: int = BotMode.PARSE,
             **kwargs) -> None:
     runner = CrawlerRunner(get_project_settings())
     runner.crawl(

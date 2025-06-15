@@ -170,8 +170,10 @@ class CookiesAndHeadersMiddleware:  #забирает куки или хедер
 
     def process_request(self, request, spider):
         if headers := self.get_event_headers(spider):
+            logger.info(f'для запроса добавлены headers: {headers}')
             request.headers.update(headers)
         if cookies := self.get_event_cookies(spider):
+            logger.info(f'для запроса добавлены cookies: {cookies}')
             self.add_cookies_to_headers(cookies, request)
 
 

@@ -5,7 +5,6 @@ import pymongo
 from crawler.conf import settings
 
 logger = logging.getLogger('scrapy.mongo_utils')
-logging.getLogger('pika').setLevel(logging.INFO)
 
 
 def get_mongo_bots_client():
