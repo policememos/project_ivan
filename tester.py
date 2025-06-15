@@ -14,18 +14,37 @@ os.makedirs(LOG_DIR, exist_ok=True)
 
 
 logger = logging.getLogger('project_ivan.tester')
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(name)s - %(asctime)s - %(levelname)s - %(message)s",  # Формат сообщения,
-    handlers=[
-        RotatingFileHandler(LOG_FILE, encoding="utf-8"),
-        logging.StreamHandler()
-    ])
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter("%(name)s - %(asctime)s - %(levelname)s - %(message)s")
+
+# Обработчик для файла с ротацией
+file_handler = RotatingFileHandler(
+    LOG_FILE,
+    maxBytes=10*1024*1024,  # 10 MB
+    backupCount=5,
+    encoding='utf-8'
+)
+file_handler.setFormatter(formatter)
+
+# Обработчик для консоли
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(formatter)
+
+# Добавляем обработчики к логгеру
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
+
+
 
 logger.info("Демон запущен и пишет логи в файл %s", LOG_FILE)
 
-admin = get_bot_admins()
-for adm in admin:
-    send_sms_message(adm, f'Supervisor STARTED')
-    logger.info('отправил приветствие %s', adm)
+
+
+try:
+    admin = get_bot_admins()
+    for adm in admin:
+        send_sms_message(adm, f'Supervisor STARTED')
+        logger.info('отправил приветствие %s', adm)
+except Exception:
+    logger.error("Ошибка при отправке сообщений: ", exc_info=True)
 
