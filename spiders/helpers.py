@@ -5,6 +5,7 @@ import requests
 from crawler.conf import settings
 
 logger = logging.getLogger('project_ivan.send_sms_message')
+logger.propagate = True  # передаем логи родителю
 
 
 def is_quick_spider(spider):
