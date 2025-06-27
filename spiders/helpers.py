@@ -32,14 +32,3 @@ def send_sms_message(phone: str, message: str) -> None:
     else:
         logger.info('Отправил сообщение для %s, текст: %s',
             phone, message)
-
-def test_send_sms_message(phone: str, message: str) -> None:
-    logger.info(f'тест лога инфо')
-    logger.error(f'тест лога error')
-    logger.debug(f'тест лога debug')
-
-def print_all_loggers():
-    manager = logging.Logger.manager
-    print("\nВсе зарегистрированные логгеры:")
-    for name, logger1 in manager.loggerDict.items():
-        print(f"- {name} (level={getattr(logger1, 'level', 'NOT SET')})")
