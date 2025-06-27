@@ -2,6 +2,7 @@ import os
 import logging
 from logging.handlers import RotatingFileHandler
 
+from crawler.conf import settings
 from spiders.helpers import test_send_sms_message
 
 
