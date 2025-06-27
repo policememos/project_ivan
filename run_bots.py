@@ -1,1 +1,0 @@
-from spiders.tasks import run_all_bots_main

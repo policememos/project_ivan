@@ -12,10 +12,9 @@ LOG_FILE = os.path.join(LOG_DIR, "alert_start.log")
 # Создаем директорию если не существует
 os.makedirs(LOG_DIR, exist_ok=True)
 
-
 logger = logging.getLogger('project_ivan.tester')
 logger.setLevel(logging.INFO)
-formatter = logging.Formatter("%(name)s - %(asctime)s - %(levelname)s - %(message)s")
+formatter = logging.Formatter('[%(asctime)s: %(levelname)s/%(name)s] %(message)s')
 
 # Обработчик для файла с ротацией
 file_handler = RotatingFileHandler(
@@ -34,17 +33,12 @@ console_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 logger.addHandler(console_handler)
 
-
-
 logger.info("Демон запущен и пишет логи в файл %s", LOG_FILE)
-
-
 
 try:
     admin = get_bot_admins()
     for adm in admin:
         send_sms_message(adm, f'Supervisor STARTED')
-        logger.info('отправил приветствие %s', adm)
 except Exception:
     logger.error("Ошибка при отправке сообщений: ", exc_info=True)
 

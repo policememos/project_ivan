@@ -4,7 +4,7 @@ import requests
 
 from crawler.conf import settings
 
-logger = logging.getLogger('scrapy.helpers')
+logger = logging.getLogger('project_ivan.send_sms_message')
 
 
 def is_quick_spider(spider):
