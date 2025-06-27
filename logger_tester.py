@@ -3,7 +3,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 from crawler.conf import settings
-from spiders.helpers import test_send_sms_message
+from spiders.helpers import test_send_sms_message, print_all_loggers
 
 
 LOG_DIR = "/tmp/Logs"
@@ -41,3 +41,4 @@ try:
 except Exception:
     logger.error("Ошибка при отправке сообщений: ", exc_info=True)
 
+print_all_loggers()
