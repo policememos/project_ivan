@@ -31,3 +31,8 @@ def send_sms_message(phone: str, message: str) -> None:
     else:
         logger.info('Отправил сообщение для %s, текст: %s',
             phone, message)
+
+def test_send_sms_message(phone: str, message: str) -> None:
+    logger.info(f'тест лога инфо')
+    logger.error(f'тест лога error')
+    logger.debug(f'тест лога debug')
